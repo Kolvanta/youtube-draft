@@ -12,6 +12,7 @@ body { font-family:'Nunito', sans-serif;
 }
 
 .bg-0 {
+  display: none;
   background: lightblue url('proudShades.gif') no-repeat center;
 }
 
@@ -40,6 +41,7 @@ body { font-family:'Nunito', sans-serif;
 
 /* -------------------------------------------------- */
 .div-2 {
+  display: none;
   border: 10px dotted black;
   padding: 15px;
   color: #fff;
