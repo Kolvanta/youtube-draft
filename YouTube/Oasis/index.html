@@ -1,11 +1,155 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css?family=Dosis|Nunito|Yanone+Kaffeesatz" rel="stylesheet"/>
   </head>
-  <body onload="myFunction()">
-    <div id="area"></div>
-    <script src="script.js" type="text/javascript"></script>
+  <body onload="loadArea()">
+    <div id="scoreBoard">
+      <h1>Score</h1>
+      <p><span id="score"></span> / <span id="goal"></span></p>
+      <div id="game-over">
+        <h1>You Win!</h1>
+        <h3>Refresh The Page to Play Again!</h3>
+      </div>
+    </div>
+    <div id="gameBoard"></div>
+    <script>
+      const BLOCKS = 4;
+      const GOAL = 10;
+      const BOARD = 'gameBoard';
+      const icons = ['carben.png', 'coffeeben.png', 'diamondben.png', 'walletben.png'];
+      let score = 0;
+      let randomValue = getRandomArbitrary(1, BLOCKS);
+      console.log(randomValue)
+
+      function loadArea() {
+        document.getElementById('score').textContent = score;
+        document.getElementById('goal').textContent = GOAL;
+        drawBlocks(BOARD);
+      }
+      function drawBlocks(parentId) {
+        const parent = document.getElementById(parentId);
+
+        for(let i = 0; i < BLOCKS; i++) {
+          var block = document.createElement("div");
+          block.className = 'block';
+          block.value = i + 1;
+          block.style.backgroundImage = `url(./${icons[i]})`;
+          block.addEventListener('click', selectBlock);
+
+          parent.appendChild(block);
+        }
+      }
+      function selectBlock(e) {
+        var targetValue = e.target.value;
+
+        if(targetValue === randomValue) {
+          score++;
+          e.target.classList.add('reveal-yes');
+          var message = document.createElement("p");
+          message.className ='message';
+          var textnode = document.createTextNode('CONGRATS!'); 
+          message.appendChild(textnode); 
+          var image = document.createElement("img");
+          image.src ='./star.png';
+          image.className = 'image';
+          e.target.appendChild(message);
+          e.target.appendChild(image); 
+          setTimeout(() => {
+            e.target.classList.remove('reveal-yes');
+            setTimeout(() => {
+              resetGameBoard(BOARD);
+            }, 1000);
+          }, 3000);
+        } else { 
+          score = 0; 
+          e.target.classList.add('reveal-no');
+          var message = document.createElement("p");
+          message.className ='message';
+          var textnode = document.createTextNode('TRY AGAIN!'); 
+          message.appendChild(textnode); 
+          e.target.appendChild(message);
+          setTimeout(() => {
+            e.target.classList.remove('reveal-no');
+            setTimeout(() => {
+              resetGameBoard(BOARD);
+            }, 1000);
+          }, 3000);
+        }
+
+        document.getElementById('score').textContent = score;
+
+        if(score === GOAL) {
+          document.getElementById('game-over').style.display = 'block';
+        }
+      }
+      function getRandomArbitrary(min, max) {
+        return Math.floor((Math.random() * max) + min);
+      }
+      function resetGameBoard(parentId) {
+        const parentNode = document.getElementById(parentId);
+        while (parentNode.firstChild) {
+          parentNode.removeChild(parentNode.lastChild);
+        }
+        randomValue = getRandomArbitrary(1, BLOCKS);
+        console.log(randomValue)
+        drawBlocks(parentId);
+      }
+    </script>
+    <style>
+      #gameBoard {
+        display: grid;
+        grid-template-columns: repeat(2, 150px);
+        grid-template-rows: repeat(auto, 150px);
+        background-color: #000;
+        column-gap: 10px;
+        row-gap: 10px;
+        padding: 10px;
+        width: min-content;
+      }
+      #scoreBoard {
+        display: inline-flex;
+        flex-direction: column;
+        align-content: flex-start;
+      }
+      .block {
+        width: 150px;
+        height: 150px;
+        background-size: cover;
+        border: 1px solid #fff;
+        transition: transform 1.5s, background-color 1.8s, box-shadow 1.8s;
+        text-align: center;
+      }
+      .reveal-yes {
+        transform: rotateY(180deg);
+        background-color: #0f0;
+        box-shadow: 0 0 8px #0f0;
+      }
+      .reveal-no {
+        transform: rotateY(180deg);
+        background-color: #f00;
+        box-shadow: 0 0 8px #f00;
+      }
+      .message {
+        transform: rotateY(180deg);
+        font-family: 'Nunito', sans-serif;
+        font-weight: bold;
+        opacity: 0;
+        animation: opacity 4s;
+      }
+      .image {
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+        animation: opacity 4s;
+      }
+      @keyframes opacity {
+        50% { opacity: 0.25; }
+        75% { opacity: 1; }
+      }
+      #game-over {
+        display: none;
+      }
+    </style>
   </body>
 </html>
